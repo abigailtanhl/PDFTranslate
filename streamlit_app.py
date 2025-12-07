@@ -134,7 +134,7 @@ def main():
                     status_text.text(f"Translating chunk {i + 1} of {total_chunks}...")
                     
                     # Call the translation function
-                    translated_chunk = translate_chunk(client, chunk, "English")
+                    translated_chunk = translate_chunk(model, chunk, "English")
                     translated_text_parts.append(translated_chunk)
                     
                     # Update progress
