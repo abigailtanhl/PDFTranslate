@@ -1,6 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
-from google.generativeai import APIError
+from google.generativeai.errors import APIError
 from PyPDF2 import PdfReader
 import io
 import time
