@@ -1,1 +1,5 @@
-streamlit
+streamlit>=1.28.0
+google-genai>=0.3.0
+PyPDF2>=4.0.0
+google-genai
+PyPDF2

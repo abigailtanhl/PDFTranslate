@@ -4,12 +4,18 @@ from google.genai.errors import APIError
 from PyPDF2 import PdfReader
 import io
 import time
+import os
 
 # --- Configuration and Constants ---
 
 MODEL_NAME = "gemini-2.5-flash"
 MAX_CHUNK_SIZE = 10000 
-API_SLEEP_TIME = 1.0 
+API_SLEEP_TIME = 1.0
+
+# Load API key from Streamlit secrets or environment variable
+api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+if api_key:
+    genai.configure(api_key=api_key) 
 
 
 # --- Core Functions ---
@@ -83,8 +89,8 @@ def translate_chunk(client: genai.Client, chunk: str, target_lang: str) -> str:
 def main():
     """Main Streamlit application function."""
     st.set_page_config(page_title="Secure PDF Translator (Gemini API)", layout="wide")
-    st.title("🔒 Secure PDF Translator with Gemini API")
-    st.markdown("Upload a document and translate it to English using the free-tier Gemini API. API Key is loaded securely via `st.secrets`.")
+    st.title("🔒 Secure PDF Translator with Gemini")
+    st.markdown("Upload a document and translate it to English using the free-tier Gemini API.")
 
     # 1. API Key Setup using Streamlit Secrets
     gemini_key = st.secrets.get("GEMINI_API_KEY")
