@@ -55,32 +55,23 @@ def chunk_text(text: str, chunk_size: int) -> list[str]:
         
     return chunks
 
-def translate_chunk(client: genai.Client, chunk: str, target_lang: str) -> str:
+def translate_chunk(model: genai.GenerativeModel, chunk: str, target_lang: str) -> str:
     """Sends a single chunk of text to the Gemini API for translation."""
-    
     system_instruction = (
         f"You are a professional, high-quality document translator. "
         f"Translate the following text into **{target_lang}**. Maintain the original formatting, "
         f"including paragraph breaks and spacing. Do not add any extra commentary or introductory phrases."
     )
-    
     prompt = f"Translate the following document text:\n\n---\n\n{chunk}"
-
     try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_instruction
-            )
-        )
+        response = model.generate_content([
+            system_instruction,
+            prompt
+        ])
         return response.text
-    except APIError as e:
+    except Exception as e:
         st.error(f"Gemini API Error: {e}")
         return f"[Translation Error for this chunk: {e}]"
-    except Exception as e:
-        st.error(f"An unexpected error occurred during API call: {e}")
-        return f"[Unexpected Error for this chunk: {e}]"
 
 
 # --- Streamlit App Layout ---
@@ -104,10 +95,11 @@ def main():
         st.stop() # Stop execution if the key is missing
 
     try:
-        # Initialize Gemini Client using the key from st.secrets
-        client = genai.Client(api_key=gemini_key)
+        # Initialize Gemini GenerativeModel using the key from st.secrets
+        genai.configure(api_key=gemini_key)
+        model = genai.GenerativeModel(MODEL_NAME)
     except Exception:
-        st.error("Failed to initialize the Gemini Client. Check if your API Key is valid.")
+        st.error("Failed to initialize the Gemini Model. Check if your API Key is valid.")
         st.stop()
 
     # 2. File Uploader
